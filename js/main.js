@@ -11,11 +11,63 @@ jQuery(document).ready(function($) {
 	$("#formsubmit").click(e => {
 		e.preventDefault();
 		var subject = $("#subject").val();
-		var message = $("#message").val();
+		var text = $("#message").val();
 		var email = $("#email").val();
+		var fname = $("#fname").val();
+		var lname = $("#lname").val();
 
-		console.log(`subject: ${subject}, message: ${message}, email: ${email}`);
+		var body = `${text}, Od:${fname} ${lname}`; 
+
+		if(!validateEmail(email)){
+			alert("Niepoprawny adres email");
+			return;
+		}
+
+		if(subject.trim().length <= 0){
+			alert("Prosimy o wpisanie tematu wiadomości");
+			return;
+		}
+
+		if(body.trim().length <= 0){
+			alert("Prosimy o wpisanie wiadomości");
+			return;
+		}
+
+		var url = "https://piesnababy.azurewebsites.net/api/SendingEmailsToMe?code=Ch4/fVaUXfRibAlZ6fYcX1ag1CveKiGyHfQq82BAWO3zHXoauuTiiQ==";
+
+		var jsonData = {
+			"subject": subject,
+			"mailFrom": email,
+			"message": body
+		};
+
+		var data = JSON.stringify(jsonData);
+
+		postXhrRequest(url, data).then((e) => {
+			alert("Wiadomość wysłana pomyślnie, dziękujemy :)");
+			console.log(e);
+		}, (e) => {
+			alert("Wystąpł błąd podczas wysyłania wiadomości. Prosimy o kontakt mailowy pod adresem kontakt@pies-na-baby.pl");
+			console.log(e);
+		});
 	});
+
+	var validateEmail = function(email) 
+	{
+		var re = /\S+@\S+\.\S+/;
+		return re.test(email);
+	}
+
+	var postXhrRequest = function(url, data) {
+		return new Promise(function (resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader("Content-Type", "application/json");
+			xhr.onload = resolve;
+			xhr.onerror = reject;
+			xhr.send(data);
+		});
+	}
 	
 
 	var siteMenuClone = function() {
