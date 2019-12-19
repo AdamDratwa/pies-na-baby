@@ -42,12 +42,19 @@ jQuery(document).ready(function($) {
 		};
 
 		var data = JSON.stringify(jsonData);
+		
+		$("#formsubmit").attr("disabled", true);
+		$("#formsubmit").val("Wysyłam...");
 
 		postXhrRequest(url, data).then((e) => {
 			alert("Wiadomość wysłana pomyślnie, dziękujemy :)");
+			clearFields();
+
 			console.log(e);
 		}, (e) => {
 			alert("Wystąpł błąd podczas wysyłania wiadomości. Prosimy o kontakt mailowy pod adresem kontakt@pies-na-baby.pl");
+			$("#formsubmit").attr("disabled", false);
+			$("#formsubmit").val("Wyślij");
 			console.log(e);
 		});
 	});
@@ -56,6 +63,16 @@ jQuery(document).ready(function($) {
 	{
 		var re = /\S+@\S+\.\S+/;
 		return re.test(email);
+	}
+
+	var clearFields = function(){
+		 $("#subject").val("");
+		 $("#message").val("");
+		 $("#email").val("");
+		 $("#fname").val("");
+		 $("#lname").val("");
+		 $("#formsubmit").attr("disabled", false);
+		 $("#formsubmit").val("Wyślij");
 	}
 
 	var postXhrRequest = function(url, data) {
